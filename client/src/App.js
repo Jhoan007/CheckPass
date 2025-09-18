@@ -38,8 +38,9 @@ import CiudadesPopulares from './screens/Ciudades/Populares';
 // CONFIGURACION
 import ConfiguracionCrearUsuario from './screens/Configuracion/CrearUsuario';
 import ConfiguracionGestorModulos from './screens/Configuracion/GestorModulos';
-import ConfiguracionSeguridad from './screens/Configuracion/Seguridad';
-import ConfiguracionRoles from './screens/Configuracion/Roles';
+import ConfiguracionEditarUsuario from './screens/Configuracion/EditarUsuario';
+import ConfiguracionUsuariosRegistrados from './screens/Configuracion/UsuariosRegistrados';
+
 
 
 
@@ -140,8 +141,8 @@ function AppWrapper() {
                     {/* CONFIGURACIÓN */}
                     <Route path="/configuracion/crearusuario" element={<Layout><ConfiguracionCrearUsuario /></Layout>} />
                     <Route path="/configuracion/gestormodulos" element={<Layout><ConfiguracionGestorModulos /></Layout>} />
-                    <Route path="/configuracion/seguridad" element={<Layout><ConfiguracionSeguridad /></Layout>} />
-                    <Route path="/configuracion/roles" element={<Layout><ConfiguracionRoles /></Layout>} />
+                    <Route path="/configuracion/editarusuario/:id" element={<Layout><ConfiguracionEditarUsuario /></Layout>} />
+                    <Route path="/configuracion/usuariosregistrados" element={<Layout><ConfiguracionUsuariosRegistrados /></Layout>} />
 
                     {/* Catch-all route si logueado */}
                     <Route path="*" element={<Navigate to="/general/dashboard" />} />

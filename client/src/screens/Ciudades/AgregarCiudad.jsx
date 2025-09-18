@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaCity } from "react-icons/fa";
 import Swal from "sweetalert2";
 import axios from "axios";
 
@@ -54,7 +55,7 @@ const AgregarCiudad = () => {
   };
   return (
     <div className="form-container">
-      <h3>Agregar nueva ciudad</h3>
+      <h2><FaCity /> Agregar nueva ciudad</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Nombre Ciudad:</label>

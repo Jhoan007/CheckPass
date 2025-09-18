@@ -9,6 +9,8 @@ const ListaVuelos = () => {
   const [vuelos, setVuelos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const [vuelosPorPagina] = useState(8);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,16 +19,17 @@ const ListaVuelos = () => {
         const response = await axios.get(
           "https://checkpass.parqueoo.com/api/ProgramacionVuelo"
         );
-        setVuelos(response.data);
-        setLoading(false);
 
         const data = response.data;
-        console.log("Vuelos recibidos:", data);
 
+        // Ordenamos del más reciente al más antiguo
         const vuelosOrdenados = data.sort(
-          (a, b) => new Date(a.salida) - new Date(b.salida)
+          (a, b) => new Date(b.salida) - new Date(a.salida)
         );
+
         setVuelos(vuelosOrdenados);
+        setLoading(false);
+        console.log("Vuelos recibidos:", vuelosOrdenados);
       } catch (err) {
         setError("Error al cargar vuelos");
         setLoading(false);
@@ -35,8 +38,8 @@ const ListaVuelos = () => {
 
     fetchVuelos();
   }, []);
+
   const formatearHora = (fecha) => {
-    // Asegurar que la fecha termine con 'Z' para indicar que es UTC
     const fechaUtc = fecha.endsWith("Z") ? fecha : fecha + "Z";
     const date = new Date(fechaUtc);
     return date.toLocaleString("es-CO", {
@@ -61,6 +64,17 @@ const ListaVuelos = () => {
       }
     }
   };
+
+  // Paginación
+  const indiceUltimoVuelo = paginaActual * vuelosPorPagina;
+  const indicePrimerVuelo = indiceUltimoVuelo - vuelosPorPagina;
+  const vuelosActuales = vuelos.slice(indicePrimerVuelo, indiceUltimoVuelo);
+  const totalPaginas = Math.ceil(vuelos.length / vuelosPorPagina);
+
+  const irAPagina = (num) => setPaginaActual(num);
+  const paginaAnterior = () => setPaginaActual((prev) => Math.max(prev - 1, 1));
+  const paginaSiguiente = () =>
+    setPaginaActual((prev) => Math.min(prev + 1, totalPaginas));
 
   if (loading) return <p>Cargando vuelos...</p>;
   if (error) return <p>{error}</p>;
@@ -87,7 +101,7 @@ const ListaVuelos = () => {
             </tr>
           </thead>
           <tbody>
-            {vuelos.map((vuelo) => (
+            {vuelosActuales.map((vuelo) => (
               <tr key={vuelo.id_Programacion}>
                 <td>{vuelo.numeroVuelo}</td>
                 <td>{formatearHora(vuelo.salida)}</td>
@@ -135,6 +149,30 @@ const ListaVuelos = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Botones de paginación */}
+      <div className="paginacion">
+        <button className="btn-pagina" onClick={paginaAnterior} disabled={paginaActual === 1}>
+          ← Anterior
+        </button>
+
+        {[...Array(totalPaginas)].map((_, i) => (
+          <button
+            key={i}
+            onClick={() => irAPagina(i + 1)}
+            className={paginaActual === i + 1 ? "pagina-activa" : ""}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        <button className="btn-pagina"
+          onClick={paginaSiguiente}
+          disabled={paginaActual === totalPaginas}
+        >
+          Siguiente →
+        </button>
       </div>
     </div>
   );

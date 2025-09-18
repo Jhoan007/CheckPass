@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../App.css";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaUsersCog } from "react-icons/fa";
 
 const ModuloRol = () => {
   const [roles, setRoles] = useState([]);
@@ -80,7 +80,7 @@ const ModuloRol = () => {
 
   return (
     <div className="modulo-rol-container">
-      <h2>Administrador de Usuarios</h2>
+      <h2 className="titulo-tabla"><FaUsersCog /> Administrador de Usuarios</h2>
 
       <select
         className="select-role"

@@ -95,20 +95,6 @@ function Sidebar({ isOpen, toggleSidebar, handleLogout }) {
               >
                 Listar Vuelos
               </NavLink>
-              <NavLink
-                to="/vuelos/programar"
-                onClick={toggleSidebar}
-                className="sub-link"
-              >
-                Programar
-              </NavLink>
-              <NavLink
-                to="/vuelos/vuelo"
-                onClick={toggleSidebar}
-                className="sub-link"
-              >
-                Vuelo
-              </NavLink>
             </div>
           )}
         </div>
@@ -231,25 +217,18 @@ function Sidebar({ isOpen, toggleSidebar, handleLogout }) {
                 Crear Usuario
               </NavLink>
               <NavLink
+                to="/configuracion/usuariosregistrados"
+                onClick={toggleSidebar}
+                className="sub-link"
+              >
+                Usuarios Registrados
+              </NavLink>
+              <NavLink
                 to="/configuracion/gestormodulos"
                 onClick={toggleSidebar}
                 className="sub-link"
               >
                 Gestor Modulos
-              </NavLink>
-              <NavLink
-                to="/configuracion/seguridad"
-                onClick={toggleSidebar}
-                className="sub-link"
-              >
-                Seguridad
-              </NavLink>
-              <NavLink
-                to="/configuracion/roles"
-                onClick={toggleSidebar}
-                className="sub-link"
-              >
-                Roles
               </NavLink>
             </div>
           )}

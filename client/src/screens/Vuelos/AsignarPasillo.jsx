@@ -19,7 +19,6 @@ function AsignarPasillo() {
   const [seleccionado, setSeleccionado] = useState(null);
   const [asignados, setAsignados] = useState([]);
 
-  // Validar existencia del ID de vuelo
   useEffect(() => {
     if (!vueloId) {
       Swal.fire({
@@ -32,41 +31,59 @@ function AsignarPasillo() {
     }
   }, [vueloId, navigate]);
 
-  // Cargar todos los pasillos activos
-  useEffect(() => {
-    axios
-      .get("https://checkpass.parqueoo.com/api/Pasillo")
-      .then((res) => {
-        const activos = res.data.filter((p) => p.activo);
-        setPasillos(activos);
-      })
-      .catch(() =>
-        Swal.fire("Error", "No se pudo cargar los pasillos", "error")
-      );
-  }, []);
-
-  // Cargar pasillos ya asignados al vuelo
+  // Cargar todos los pasillos, no solo los activos
   useEffect(() => {
     if (!vueloId) return;
 
+    // Cargar asignaciones y luego cruzarlas con los pasillos cargados previamente
     axios
       .get("https://checkpass.parqueoo.com/api/ProgramacionVueloPasillo")
       .then((res) => {
-        const asignadosFiltrados = res.data
-          .filter((rel) => rel.fk_ProgramacionVuelo === Number(vueloId))
-          .map((rel) => ({
-            ...rel.pasillo, // Info del pasillo
-            idRelacion: rel.id, // ID de la relación para eliminar
-          }));
+        const asignacionesVuelo = res.data.filter(
+          (rel) => rel.fk_ProgramacionVuelo === Number(vueloId)
+        );
 
-        setAsignados(asignadosFiltrados);
+        // Aseguramos de tener los pasillos cargados
+        axios
+          .get("https://checkpass.parqueoo.com/api/Pasillo")
+          .then((resPasillos) => {
+            const pasillosActivos = resPasillos.data.filter((p) => p.activo);
+
+            // Unir los datos por ID
+            const asignadosCompletos = asignacionesVuelo
+              .map((asignacion) => {
+                const pasillo = pasillosActivos.find(
+                  (p) => p.id_Pasillo === asignacion.fk_Pasillo
+                );
+
+                return pasillo
+                  ? {
+                      ...pasillo,
+                      idRelacion: asignacion.id,
+                    }
+                  : null;
+              })
+              .filter(Boolean); // Eliminar posibles null
+
+            setAsignados(asignadosCompletos);
+          });
       })
       .catch(() =>
         Swal.fire("Error", "No se pudo cargar pasillos asignados", "error")
       );
   }, [vueloId]);
 
-  // Buscar pasillo por IP
+  useEffect(() => {
+    axios
+      .get("https://checkpass.parqueoo.com/api/Pasillo")
+      .then((res) => {
+        setPasillos(res.data); // ← aquí sí lo usas
+      })
+      .catch(() => {
+        Swal.fire("Error", "No se pudieron cargar los pasillos", "error");
+      });
+  }, []);
+
   const handleBusqueda = (texto) => {
     setBusqueda(texto);
     setSeleccionado(null);
@@ -81,13 +98,20 @@ function AsignarPasillo() {
     }
   };
 
-  // Agregar pasillo
   const agregarPasillo = async () => {
     if (!seleccionado || !vueloId) {
       return Swal.fire(
         "Advertencia",
         "Debe seleccionar un pasillo y tener un vuelo válido.",
         "warning"
+      );
+    }
+
+    if (!seleccionado.activo) {
+      return Swal.fire(
+        "Inactivo",
+        "No puedes asignar un pasillo inactivo.",
+        "info"
       );
     }
 
@@ -112,12 +136,11 @@ function AsignarPasillo() {
         }
       );
 
-      // Guardar el nuevo pasillo con idRelacion (respuesta del POST)
       setAsignados((prev) => [
         ...prev,
         {
           ...seleccionado,
-          idRelacion: response.data.id, // suponiendo que devuelve el ID nuevo
+          idRelacion: response.data.id,
         },
       ]);
 
@@ -136,7 +159,6 @@ function AsignarPasillo() {
     }
   };
 
-  // Eliminar pasillo asignado
   const eliminarPasillo = async (idRelacion) => {
     const confirmar = await Swal.fire({
       title: "¿Eliminar pasillo?",
@@ -174,7 +196,10 @@ function AsignarPasillo() {
           onChange={(e) => handleBusqueda(e.target.value)}
           placeholder="Buscar por IP de pasillo"
         />
-        <button onClick={agregarPasillo} disabled={!seleccionado}>
+        <button
+          onClick={agregarPasillo}
+          disabled={!seleccionado || !seleccionado.activo}
+        >
           + Agregar
         </button>
       </div>
@@ -191,12 +216,25 @@ function AsignarPasillo() {
             {resultados.map((p) => (
               <tr
                 key={p.id_Pasillo}
-                onClick={() => setSeleccionado(p)}
-                className={
-                  seleccionado?.id_Pasillo === p.id_Pasillo
-                    ? "seleccionado"
-                    : ""
-                }
+                onClick={() => {
+                  if (!p.activo) {
+                    Swal.fire(
+                      "Pasillo inactivo",
+                      "No se puede asignar este pasillo porque está inactivo.",
+                      "info"
+                    );
+                    return;
+                  }
+                  setSeleccionado(p);
+                }}
+                className={`
+                  ${
+                    seleccionado?.id_Pasillo === p.id_Pasillo
+                      ? "seleccionado"
+                      : ""
+                  }
+                  ${!p.activo ? "inactivo" : ""}
+                `}
               >
                 <td>{p.ipPasillo}</td>
                 <td>{p.activo ? "Activo" : "Inactivo"}</td>

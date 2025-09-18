@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import {
   FaPlaneDeparture,
   FaPlaneArrival,
-  FaBuilding,
+  FaPlane,
   FaClock,
   FaArrowLeft,
   FaRedo,
@@ -114,13 +114,13 @@ const Vuelo = () => {
       <div className="vuelo-grid">
         <div className="vuelo-item">
           <div className="vuelo-label">
-            <FaPlaneDeparture /> Aerolínea
+           <FaPlane />  Aerolínea
           </div>
           <div className="vuelo-value">{vuelo.aerolineaNombre}</div>
         </div>
         <div className="vuelo-item">
           <div className="vuelo-label">
-            <FaBuilding /> Origen
+            <FaPlaneDeparture /> Origen
           </div>
           <div className="vuelo-value">{vuelo.ciudadOrigen}</div>
         </div>

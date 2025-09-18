@@ -16,52 +16,69 @@ const ActivarPasillo = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!ipPasillo.trim()) {
+  if (!ipPasillo.trim()) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "El campo IP del pasillo es obligatorio.",
+    });
+    return;
+  }
+
+  if (!validarIP(ipPasillo)) {
+    Swal.fire({
+      icon: "error",
+      title: "IP inválida",
+      text: "Por favor ingresa una dirección IP válida (formato IPv4).",
+    });
+    return;
+  }
+
+  try {
+    // 🔍 Verificar si la IP ya existe
+    const { data } = await axios.get("https://checkpass.parqueoo.com/api/Pasillo");
+
+    const ipExiste = data.some((pasillo) => pasillo.ipPasillo === ipPasillo);
+
+    if (ipExiste) {
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "El campo IP del pasillo es obligatorio.",
+        icon: "warning",
+        title: "IP ya registrada",
+        text: "La IP ingresada ya está registrada. No se puede duplicar.",
       });
       return;
     }
 
-    if (!validarIP(ipPasillo)) {
-      Swal.fire({
-        icon: "error",
-        title: "IP inválida",
-        text: "Por favor ingresa una dirección IP válida (formato IPv4).",
-      });
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "https://checkpass.parqueoo.com/api/Pasillo",
-        {
-          ipPasillo,
-          activo,
-        }
-      );
-
-      if (response.status === 201) {
-        Swal.fire({
-          icon: "success",
-          title: "¡Éxito!",
-          text: "Pasillo activado/desactivado correctamente.",
-        });
-        setIpPasillo("");
-        setActivo(false);
+    // ✅ Si no existe, enviar el POST
+    const response = await axios.post(
+      "https://checkpass.parqueoo.com/api/Pasillo",
+      {
+        ipPasillo,
+        activo,
       }
-    } catch (error) {
+    );
+
+    if (response.status === 201) {
       Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo procesar la solicitud. Intenta de nuevo.",
+        icon: "success",
+        title: "¡Éxito!",
+        text: "Pasillo registrado correctamente.",
       });
+      setIpPasillo("");
+      setActivo(false);
     }
-  };
+  } catch (error) {
+    console.error("Error al registrar el pasillo:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "No se pudo procesar la solicitud. Intenta de nuevo.",
+    });
+  }
+};
+
 
   return (
     <div className="form-container">

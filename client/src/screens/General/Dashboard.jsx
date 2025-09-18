@@ -22,7 +22,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-// REGISTRAR COMPONENTES PARA ChartJS
+// REGISTRO CHART
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -33,7 +33,7 @@ ChartJS.register(
   Filler
 );
 
-// DATOS DEL GRAFICO
+// DATOS DEL GRÁFICO (SIMULADOS, puedes reemplazar por reales)
 const chartData = {
   labels: ["12:00", "13:00", "14:00", "15:00", "16:00", "17:00"],
   datasets: [
@@ -63,32 +63,50 @@ const chartOptions = {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
   const [vuelos, setVuelos] = useState([]);
+  const [cancelados, setCancelados] = useState(0);
+  const [vuelosNacionales, setVuelosNacionales] = useState(0);
+  const [vuelosInternacionales, setVuelosInternacionales] = useState(0);
+  const [pasillos, setPasillos] = useState([]);
 
   useEffect(() => {
-    const obtenerVuelos = async () => {
+    const fetchDatos = async () => {
       try {
-        const response = await axios.get(
+        // Vuelos
+        const resVuelos = await axios.get(
           "https://checkpass.parqueoo.com/api/ProgramacionVuelo"
         );
-        const data = response.data;
-        console.log("Vuelos recibidos:", data);
+        const vuelosData = resVuelos.data;
+        setVuelos(vuelosData);
 
-        // ORDENA POR HORAS DE VUELO--
-        const vuelosOrdenados = data.sort(
-          (a, b) => new Date(a.salida) - new Date(b.salida)
+        // Cancelados
+        const vuelosCancelados = vuelosData.filter((v) => v.cancelado);
+        setCancelados(vuelosCancelados.length);
+        
+        // Tipo de vuelos
+        const vuelosNac = vuelosData.filter((v) => !v.esInternacional).length;
+        const vuelosInt = vuelosData.filter((v) => v.esInternacional).length;
+        setVuelosNacionales(vuelosNac);
+        setVuelosInternacionales(vuelosInt);
+
+        // Pasillos
+        const resPasillos = await axios.get(
+          "https://checkpass.parqueoo.com/api/Pasillo"
         );
-        setVuelos(vuelosOrdenados);
+        setPasillos(resPasillos.data);
       } catch (error) {
-        console.error("Error al obtener vuelos:", error);
+        console.error("Error al cargar datos del dashboard:", error);
       }
     };
 
-    obtenerVuelos();
+    fetchDatos();
   }, []);
 
+  // Calcular pasillos inactivos
+  const pasillosInactivos = pasillos.filter((p) => !p.activo).length;
+
   const formatearHora = (fecha) => {
-    // Asegurar que la fecha termine con 'Z' para indicar que es UTC
     const fechaUtc = fecha.endsWith("Z") ? fecha : fecha + "Z";
     const date = new Date(fechaUtc);
     return date.toLocaleString("es-CO", {
@@ -103,23 +121,30 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
+      {/* TARJETAS ESTADÍSTICAS */}
       <div className="stats-cards">
         <div className="card">
           <div className="card-header">
             <FaExclamationTriangle className="icon red" />
             <span>Vuelos Cancelados</span>
           </div>
-          <h2>5/120</h2>
+          <h2>
+            {cancelados}/{vuelos.length}
+          </h2>
           <p className="green">↑ 15% Última hora</p>
         </div>
+
         <div className="card">
           <div className="card-header">
             <FaBell className="icon yellow" />
-            <span>Próximos Abordajes</span>
+            <span>Tipo de Vuelos</span>
           </div>
-          <h2>45</h2>
-          <p className="green">↑ 15% Mejora</p>
+          <h2>
+            {vuelosNacionales} NAL / {vuelosInternacionales} INTL
+          </h2>
+          <p className="green">↑ 5% Mejora</p>
         </div>
+
         <div className="card">
           <div className="card-header">
             <FaPlaneDeparture className="icon green" />
@@ -128,16 +153,18 @@ const Dashboard = () => {
           <h2>{vuelos.length}</h2>
           <p className="red">↓ 2% Disminución hoy</p>
         </div>
+
         <div className="card">
           <div className="card-header">
             <FaPlaneArrival className="icon red" />
             <span>Pasillos Inactivos</span>
           </div>
-          <h2>18</h2>
-          <p className="green">↑ 15% Mejora</p>
+          <h2>{pasillosInactivos}</h2>
+          <p className="green">↑ 5% Mejora</p>
         </div>
       </div>
 
+      {/* TABLA + GRAFICO */}
       <div className="dashboard-content-row">
         {/* TABLA DE VUELOS */}
         <div className="table-section">
