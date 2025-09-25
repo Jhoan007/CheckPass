@@ -77,7 +77,7 @@ function AsignarPasillo() {
     axios
       .get("https://checkpass.parqueoo.com/api/Pasillo")
       .then((res) => {
-        setPasillos(res.data); // ← aquí sí lo usas
+        setPasillos(res.data); 
       })
       .catch(() => {
         Swal.fire("Error", "No se pudieron cargar los pasillos", "error");

@@ -37,7 +37,7 @@ const ActivarPasillo = () => {
   }
 
   try {
-    // 🔍 Verificar si la IP ya existe
+    // Verificar si la IP ya existe
     const { data } = await axios.get("https://checkpass.parqueoo.com/api/Pasillo");
 
     const ipExiste = data.some((pasillo) => pasillo.ipPasillo === ipPasillo);
@@ -51,7 +51,7 @@ const ActivarPasillo = () => {
       return;
     }
 
-    // ✅ Si no existe, enviar el POST
+    //Si no existe, enviar el POST
     const response = await axios.post(
       "https://checkpass.parqueoo.com/api/Pasillo",
       {
@@ -104,15 +104,15 @@ const ActivarPasillo = () => {
         </div>
 
         <div className="button-group">
-          <button type="submit" className="btn-save">
-            Guardar pasillo
-          </button>
           <button
             type="button"
             className="btn-back"
             onClick={() => navigate(-1)}
           >
             Regresar
+          </button>
+          <button type="submit" className="btn-save">
+            Guardar pasillo
           </button>
         </div>
       </form>

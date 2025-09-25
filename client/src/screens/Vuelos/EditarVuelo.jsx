@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "../../App.css"; // asegúrate de que tenga los mismos estilos que CrearVuelo
+import "../../App.css"; 
 import { FaPlaneDeparture } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 

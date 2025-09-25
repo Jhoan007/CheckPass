@@ -76,15 +76,15 @@ const AgregarCiudad = () => {
           />
         </div>
         <div className="button-group">
-          <button type="submit" className="btn-save">
-            Agregar Ciudad
-          </button>
           <button
             type="button"
             className="btn-back"
             onClick={() => navigate(-1)}
           >
             Regresar
+          </button>
+          <button type="submit" className="btn-save">
+            Agregar Ciudad
           </button>
         </div>
       </form>

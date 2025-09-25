@@ -64,11 +64,11 @@ const Vuelo = () => {
       };
 
       await axios.put(
-        `https://checkpass.parqueoo.com/api/ProgramacionVuelo/${id}`,
+        `https://checkpass.parqueoo.com/api/ProgramacionVuelo/cancelar/${id}`,
         payload
       );
 
-      Swal.fire("Cancelado", "El abordaje ha sido cancelado.", "success");
+      Swal.fire("Cancelado", "El vuelo ha sido cancelado.", "success");
 
       // se hace un nuevo GET para refrescar los datos
       const updated = await axios.get(
@@ -114,7 +114,7 @@ const Vuelo = () => {
       <div className="vuelo-grid">
         <div className="vuelo-item">
           <div className="vuelo-label">
-           <FaPlane />  Aerolínea
+            <FaPlane /> Aerolínea
           </div>
           <div className="vuelo-value">{vuelo.aerolineaNombre}</div>
         </div>

@@ -142,7 +142,7 @@ const UsuariosRegistrados = () => {
                 <td>{usuario.apellidos}</td>
                 <td>{usuario.correo}</td>
                 <td>{usuario.activo ? "Sí" : "No"}</td>
-                <td>{usuario.rolNombre}</td>
+                <td>{usuario.nombreRol}</td>
                 <td className="acciones">
                   <button
                     className="btn-accion editar"

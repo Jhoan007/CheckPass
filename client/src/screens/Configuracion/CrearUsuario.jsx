@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../App.css";
 import { FaSave, FaUserFriends } from "react-icons/fa";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const CrearUsuario = () => {
   const [formData, setFormData] = useState({
@@ -14,18 +15,21 @@ const CrearUsuario = () => {
     confirmarContrasena: "",
   });
 
-  const [roles, setRoles] = useState([]); // Nuevo estado para roles
-  const [error, setError] = useState("");
+  const [roles, setRoles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Llamar a la API de roles al cargar el componente
     const fetchRoles = async () => {
       try {
         const res = await axios.get("https://checkpass.parqueoo.com/api/Rol");
-        setRoles(res.data); 
+        setRoles(res.data);
       } catch (err) {
         console.error("Error al obtener roles:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "No se pudieron cargar los roles. Intenta de nuevo.",
+        });
       }
     };
 
@@ -43,6 +47,7 @@ const CrearUsuario = () => {
     const { nombres, apellidos, correo, rol, contrasena, confirmarContrasena } =
       formData;
 
+    // Validaciones antes de enviar
     if (
       !nombres ||
       !apellidos ||
@@ -51,41 +56,64 @@ const CrearUsuario = () => {
       !contrasena ||
       !confirmarContrasena
     ) {
-      setError("Todos los campos son obligatorios.");
+      Swal.fire({
+        icon: "warning",
+        title: "Campos requeridos",
+        text: "Todos los campos son obligatorios.",
+      });
       return;
     }
 
     if (contrasena !== confirmarContrasena) {
-      setError("Las contraseñas no coinciden.");
+      Swal.fire({
+        icon: "warning",
+        title: "Contraseñas no coinciden",
+        text: "La confirmación debe ser igual a la contraseña.",
+      });
       return;
     }
 
     try {
-      setError("");
-      const res = await axios.post(
-        "https://checkpass.parqueoo.com/api/Usuario",
-        {
-          nombres,
-          apellidos,
-          correo,
-          contrasena,
-          confirmarContrasena,
-          activo: true,
-          rolId: parseInt(rol, 10),
-        }
-      );
+      // Llamada a la API
+      const res = await axios.post("https://checkpass.parqueoo.com/api/Usuario", {
+        nombres,
+        apellidos,
+        correo,
+        contrasena,
+        confirmarContrasena,
+        activo: true,
+        rolId: parseInt(rol, 10),
+      });
 
-      alert(res.data.message || "Usuario creado exitosamente");
-      navigate(-1);
+      await Swal.fire({
+        icon: "success",
+        title: "Usuario creado",
+        text: res.data.message || "El usuario fue creado exitosamente.",
+        confirmButtonColor: "#3085d6",
+      });
+
+      navigate(-1); // Regresa a la página anterior
     } catch (error) {
+      console.error("Error en creación:", error.response?.data);
+
       const backendErrors = error.response?.data?.errors;
       if (backendErrors) {
         const firstKey = Object.keys(backendErrors)[0];
         const firstMessage = backendErrors[firstKey][0];
-        setError(firstMessage);
+        Swal.fire({
+          icon: "error",
+          title: "Error de validación",
+          text: firstMessage,
+          confirmButtonColor: "#d33",
+        });
       } else {
-        const msg = error.response?.data?.message || "Error al crear usuario";
-        setError(msg);
+        const msg = error.response?.data?.message || "Error al crear el usuario.";
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: msg,
+          confirmButtonColor: "#d33",
+        });
       }
     }
   };
@@ -172,8 +200,6 @@ const CrearUsuario = () => {
             </div>
           </div>
 
-          {error && <div className="error">{error}</div>}
-
           <div className="form-buttons">
             <button
               type="button"
@@ -183,7 +209,6 @@ const CrearUsuario = () => {
               ← Regresar
             </button>
             <button type="submit" className="btn-save">
-              {" "}
               <FaSave className="crearUser-icon" /> Guardar
             </button>
           </div>

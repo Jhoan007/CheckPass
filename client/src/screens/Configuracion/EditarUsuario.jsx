@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaSave, FaUserFriends } from "react-icons/fa";
 import axios from "axios";
-import Swal from "sweetalert2"; 
+import Swal from "sweetalert2";
 
 const EditarUsuario = () => {
   const { id } = useParams();
@@ -12,105 +12,100 @@ const EditarUsuario = () => {
     nombres: "",
     apellidos: "",
     correo: "",
-    rol: "",
-    rolNombre: "",
+    rol: null,   // guardamos solo el id del rol
     activo: true,
   });
 
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
-    const fetchUsuario = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `https://checkpass.parqueoo.com/api/Usuario/${id}`
+        // Traemos roles y usuario en paralelo
+        const [rolesRes, usuarioRes] = await Promise.all([
+          axios.get("https://checkpass.parqueoo.com/api/Rol"),
+          axios.get(`https://checkpass.parqueoo.com/api/Usuario/${id}`)
+        ]);
+
+        const rolesData = rolesRes.data;
+        setRoles(rolesData);
+
+        const usuario = usuarioRes.data;
+
+        // Buscar el rol correspondiente
+        const rolEncontrado = rolesData.find(
+          (r) => r.rolNombre === usuario.nombreRol
         );
-        const usuario = res.data;
 
         setFormData({
-          nombres: usuario.nombres,
-          apellidos: usuario.apellidos,
-          correo: usuario.correo,
-          rol: usuario.rolId?.toString() || "",
-          rolNombre: usuario.rolNombre || "",
-          activo: usuario.activo,
+          nombres: usuario.nombres || "",
+          apellidos: usuario.apellidos || "",
+          correo: usuario.correo || "",
+          rol: rolEncontrado ? rolEncontrado.id_Rol : null,
+          activo: usuario.activo ?? true,
         });
       } catch (err) {
-        console.error("Error al obtener usuario:", err);
+        console.error("Error al obtener datos:", err);
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "No se pudieron obtener los datos del usuario.",
+          text: "No se pudieron cargar los datos del usuario o roles.",
         });
       }
     };
 
-    const fetchRoles = async () => {
-      try {
-        const res = await axios.get("https://checkpass.parqueoo.com/api/Rol");
-        setRoles(res.data);
-      } catch (err) {
-        console.error("Error al obtener roles:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "No se pudieron cargar los roles disponibles.",
-        });
-      }
-    };
-
-    fetchUsuario();
-    fetchRoles();
+    fetchData();
   }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    if (name === "rol") {
-      const selectedRol = roles.find((r) => r.id_Rol === parseInt(value));
-      setFormData((prev) => ({
-        ...prev,
-        rol: value,
-        rolNombre: selectedRol?.rolNombre || "",
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox"
+          ? checked
+          : name === "rol"
+          ? parseInt(value, 10) || null
+          : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.rol) {
+      Swal.fire({
+        icon: "warning",
+        title: "Falta el rol",
+        text: "Por favor selecciona un rol válido.",
+      });
+      return;
+    }
+
     try {
       await axios.put(`https://checkpass.parqueoo.com/api/Usuario/${id}`, {
-        id_Usuario: parseInt(id, 10),
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         correo: formData.correo,
         activo: formData.activo,
-        rolId: parseInt(formData.rol, 10),
-        rolNombre: formData.rolNombre,
+        id_Rol: formData.rol,   
       });
 
       await Swal.fire({
         icon: "success",
         title: "Actualizado",
         text: "El usuario fue actualizado correctamente.",
-        timer: 2000,
+        timer: 1500,
         showConfirmButton: false,
       });
 
       navigate("/configuracion/usuariosregistrados");
     } catch (error) {
       const backendErrors = error.response?.data?.errors;
-
       if (backendErrors) {
         const firstKey = Object.keys(backendErrors)[0];
         const errorMsg = backendErrors[firstKey][0];
-
         Swal.fire({
           icon: "error",
           title: "Error de Validación",
@@ -130,7 +125,6 @@ const EditarUsuario = () => {
     <div className="usuario-wrapper">
       <div className="usuario-box">
         <h2 className="titulo-tabla">
-          {" "}
           <FaUserFriends /> Editar Usuario
         </h2>
         <form onSubmit={handleSubmit}>
@@ -167,13 +161,21 @@ const EditarUsuario = () => {
 
             <div className="form-group">
               <label>Rol</label>
-              <select name="rol" value={formData.rol} onChange={handleChange}>
+              <select
+                name="rol"
+                value={formData.rol ?? ""}
+                onChange={handleChange}
+              >
                 <option value="">Seleccione</option>
-                {roles.map((rol) => (
-                  <option key={rol.id_Rol} value={rol.id_Rol}>
-                    {rol.rolNombre}
-                  </option>
-                ))}
+                {roles.length > 0 ? (
+                  roles.map((rol) => (
+                    <option key={rol.id_Rol} value={rol.id_Rol}>
+                      {rol.rolNombre}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>Cargando roles...</option>
+                )}
               </select>
             </div>
 

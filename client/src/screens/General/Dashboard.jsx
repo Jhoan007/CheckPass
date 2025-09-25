@@ -78,15 +78,25 @@ const Dashboard = () => {
           "https://checkpass.parqueoo.com/api/ProgramacionVuelo"
         );
         const vuelosData = resVuelos.data;
-        setVuelos(vuelosData);
+
+        // Ordenamos por fecha de salida (recientes primero)
+        const vuelosOrdenados = vuelosData.sort(
+          (a, b) => new Date(b.salida) - new Date(a.salida)
+        );
+
+        setVuelos(vuelosOrdenados);
 
         // Cancelados
-        const vuelosCancelados = vuelosData.filter((v) => v.cancelado);
+        const vuelosCancelados = vuelosOrdenados.filter((v) => v.cancelado);
         setCancelados(vuelosCancelados.length);
-        
+
         // Tipo de vuelos
-        const vuelosNac = vuelosData.filter((v) => !v.esInternacional).length;
-        const vuelosInt = vuelosData.filter((v) => v.esInternacional).length;
+        const vuelosNac = vuelosOrdenados.filter(
+          (v) => !v.esInternacional
+        ).length;
+        const vuelosInt = vuelosOrdenados.filter(
+          (v) => v.esInternacional
+        ).length;
         setVuelosNacionales(vuelosNac);
         setVuelosInternacionales(vuelosInt);
 
