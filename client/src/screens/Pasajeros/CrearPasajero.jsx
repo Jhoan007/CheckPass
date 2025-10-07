@@ -137,7 +137,7 @@ const CrearPasajeroProgramado = () => {
           <button
             type="button"
             className="btn-back"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("general/dashboard")}
           >
             Regresar
           </button>

@@ -38,9 +38,10 @@ const Vuelo = () => {
     obtenerVuelo();
   }, [id]);
 
-  const cancelarAbordaje = async () => {
+  // FUNCIÓN PARA CANCELAR
+  const cancelarVuelo = async () => {
     const confirmar = await Swal.fire({
-      title: "¿Cancelar abordaje?",
+      title: "¿Cancelar vuelo?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -70,19 +71,71 @@ const Vuelo = () => {
 
       Swal.fire("Cancelado", "El vuelo ha sido cancelado.", "success");
 
-      // se hace un nuevo GET para refrescar los datos
       const updated = await axios.get(
         `https://checkpass.parqueoo.com/api/ProgramacionVuelo/${id}`
       );
       setVuelo(updated.data);
     } catch (err) {
       console.error(
-        "Error en cancelar abordaje:",
+        "Error en cancelar vuelo:",
         err.response?.data || err.message
       );
       Swal.fire(
         "Error",
-        "No se pudo cancelar el abordaje.\n" +
+        "No se pudo cancelar el vuelo.\n" +
+          (err.response?.data?.message || err.message),
+        "error"
+      );
+    }
+  };
+
+  // FUNCIÓN PARA ACTIVAR
+  const activarVuelo = async () => {
+    const confirmar = await Swal.fire({
+      title: "¿Activar vuelo?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#28a745",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, Activar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!confirmar.isConfirmed) return;
+
+    try {
+      const payload = {
+        id_Programacion: vuelo.id_Programacion,
+        numeroVuelo: vuelo.numeroVuelo || "",
+        salida: vuelo.salida,
+        llegada: vuelo.llegada,
+        esInternacional: vuelo.esInternacional || false,
+        horasAnticipacionAbordaje: vuelo.horasAnticipacionAbordaje || 0,
+        cancelado: false,
+        fkAerolinea: Number(vuelo.fkAerolinea) || 0,
+        fkCiudadOrigen: Number(vuelo.fkCiudadOrigen) || 0,
+        fkCiudadDestino: Number(vuelo.fkCiudadDestino) || 0,
+      };
+
+      await axios.put(
+        `https://checkpass.parqueoo.com/api/ProgramacionVuelo/activar/${id}`,
+        payload
+      );
+
+      Swal.fire("Activado", "El vuelo ha sido activado.", "success");
+
+      const updated = await axios.get(
+        `https://checkpass.parqueoo.com/api/ProgramacionVuelo/${id}`
+      );
+      setVuelo(updated.data);
+    } catch (err) {
+      console.error(
+        "Error al reactivar vuelo:",
+        err.response?.data || err.message
+      );
+      Swal.fire(
+        "Error",
+        "No se pudo reactivar el vuelo.\n" +
           (err.response?.data?.message || err.message),
         "error"
       );
@@ -170,21 +223,26 @@ const Vuelo = () => {
           <FaArrowLeft /> Regresar
         </button>
 
-        <button
-          className="btn btn-reprogramar"
-          onClick={() => navigate(`/vuelos/editar/${id}`, { state: { vuelo } })}
-          disabled={vuelo.cancelado}
-        >
-          <FaRedo /> Reprogramar
-        </button>
+        {!vuelo.cancelado && (
+          <button
+            className="btn btn-reprogramar"
+            onClick={() =>
+              navigate(`/vuelos/editar/${id}`, { state: { vuelo } })
+            }
+          >
+            <FaRedo /> Reprogramar
+          </button>
+        )}
 
-        <button
-          className="btn btn-cancelar"
-          onClick={cancelarAbordaje}
-          disabled={vuelo.cancelado}
-        >
-          <FaTimesCircle /> Cancelar abordaje
-        </button>
+        {!vuelo.cancelado ? (
+          <button className="btn btn-cancelar" onClick={cancelarVuelo}>
+            <FaTimesCircle /> Cancelar Vuelo
+          </button>
+        ) : (
+          <button className="btn btn-activar" onClick={activarVuelo}>
+            <FaPlane /> Activar Vuelo
+          </button>
+        )}
       </div>
     </div>
   );

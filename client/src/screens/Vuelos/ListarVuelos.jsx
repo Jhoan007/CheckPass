@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaTrashAlt, FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { IoAirplaneSharp } from "react-icons/io5";
 import "../../App.css";
@@ -10,7 +10,7 @@ const ListaVuelos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
-  const [vuelosPorPagina] = useState(8);
+  const [vuelosPorPagina] = useState(7);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -174,6 +174,9 @@ const ListaVuelos = () => {
           Siguiente →
         </button>
       </div>
+      <button className="btn btn-regresar" onClick={() => navigate("general/dashboard")}>
+                <FaArrowLeft /> Regresar
+              </button>
     </div>
   );
 };

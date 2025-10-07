@@ -11,6 +11,7 @@ const AgregarCiudad = () => {
   const [nombreCiudad, setNombreCiudad] = useState("");
   const [codigoIata, setCodigoIata] = useState("");
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -79,7 +80,7 @@ const AgregarCiudad = () => {
           <button
             type="button"
             className="btn-back"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("general/dashboard")}
           >
             Regresar
           </button>

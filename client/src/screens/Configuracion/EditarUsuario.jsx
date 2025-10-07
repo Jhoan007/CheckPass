@@ -12,7 +12,7 @@ const EditarUsuario = () => {
     nombres: "",
     apellidos: "",
     correo: "",
-    rol: null,   // guardamos solo el id del rol
+    rol: null, // guardamos solo el id del rol
     activo: true,
   });
 
@@ -24,7 +24,7 @@ const EditarUsuario = () => {
         // Traemos roles y usuario en paralelo
         const [rolesRes, usuarioRes] = await Promise.all([
           axios.get("https://checkpass.parqueoo.com/api/Rol"),
-          axios.get(`https://checkpass.parqueoo.com/api/Usuario/${id}`)
+          axios.get(`https://checkpass.parqueoo.com/api/Usuario/${id}`),
         ]);
 
         const rolesData = rolesRes.data;
@@ -89,7 +89,7 @@ const EditarUsuario = () => {
         apellidos: formData.apellidos,
         correo: formData.correo,
         activo: formData.activo,
-        id_Rol: formData.rol,   
+        id_Rol: formData.rol,
       });
 
       await Swal.fire({
@@ -102,14 +102,14 @@ const EditarUsuario = () => {
 
       navigate("/configuracion/usuariosregistrados");
     } catch (error) {
-      const backendErrors = error.response?.data?.errors;
-      if (backendErrors) {
-        const firstKey = Object.keys(backendErrors)[0];
-        const errorMsg = backendErrors[firstKey][0];
+      const errors = error.response?.data?.errors;
+      if (errors) {
+        const field = Object.keys(errors)[0];
+        const message = errors[field][0];
         Swal.fire({
           icon: "error",
           title: "Error de Validación",
-          text: errorMsg || "Verifica los datos del formulario.",
+          text: message || "Revisa los datos del formulario.",
         });
       } else {
         Swal.fire({

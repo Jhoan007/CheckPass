@@ -192,7 +192,7 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {vuelos.map((vuelo) => (
+              {vuelos.slice(0,8).map((vuelo) => (
                 <tr
                   key={vuelo.id_Programacion}
                   onClick={() => navigate(`/vuelos/${vuelo.id_Programacion}`)}
