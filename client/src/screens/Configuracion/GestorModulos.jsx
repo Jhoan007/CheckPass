@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import "../../App.css";
-import { FaTrashAlt, FaUsersCog } from "react-icons/fa";
+import { FaTrashAlt, FaUsersCog, FaArrowLeft, FaSave } from "react-icons/fa";
 
 const ModuloRol = () => {
   const [roles, setRoles] = useState([]);
@@ -140,15 +140,15 @@ const ModuloRol = () => {
         </tbody>
       </table>
       <div className="form-buttons">
-        <button type="button" className="btn-back" onClick={() => navigate(-1)}>
-          ← Regresar
+        <button type="button" className="btn-back" onClick={() => navigate("general/dashboard")}>
+          <FaArrowLeft /> Regresar
         </button>
         <button
           type="button"
           className="btn-save"
           onClick={guardarAsignaciones}
         >
-          Guardar
+          <FaSave/> Guardar
         </button>
       </div>
     </div>

@@ -84,7 +84,6 @@ const ListaVuelos = () => {
       <h2 className="titulo-tabla">
         <IoAirplaneSharp /> Vuelos
       </h2>
-
       <div className="tabla-scroll-vertical">
         <table className="tabla-vuelos">
           <thead>
@@ -153,7 +152,11 @@ const ListaVuelos = () => {
 
       {/* Botones de paginación */}
       <div className="paginacion">
-        <button className="btn-pagina" onClick={paginaAnterior} disabled={paginaActual === 1}>
+        <button
+          className="btn-pagina"
+          onClick={paginaAnterior}
+          disabled={paginaActual === 1}
+        >
           ← Anterior
         </button>
 
@@ -167,16 +170,23 @@ const ListaVuelos = () => {
           </button>
         ))}
 
-        <button className="btn-pagina"
+        <button
+          className="btn-pagina"
           onClick={paginaSiguiente}
           disabled={paginaActual === totalPaginas}
         >
           Siguiente →
         </button>
       </div>
-      <button className="btn btn-regresar" onClick={() => navigate("general/dashboard")}>
-                <FaArrowLeft /> Regresar
-              </button>
+      <div className="button-group">
+        <button
+          type="button"
+          className="btn-back"
+          onClick={() => navigate("general/dashboard")}
+        >
+          <FaArrowLeft /> Regresar
+        </button>
+      </div>
     </div>
   );
 };

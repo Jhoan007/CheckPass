@@ -7,6 +7,7 @@ import {
   FaChartBar,
   FaCity,
   FaSignOutAlt,
+  FaIdCardAlt,
 } from "react-icons/fa";
 import { FaGear } from "react-icons/fa6";
 import Inco from "./images/Inco.png";
@@ -193,6 +194,25 @@ function Sidebar({ isOpen, toggleSidebar, handleLogout }) {
                 className="sub-link"
               >
                 Populares
+              </NavLink>
+            </div>
+          )}
+        </div>
+
+        {/* AUDITORIA */}
+        <div className="nav-group">
+          <div className="nav-link" onClick={() => toggleMenu("auditoria")}>
+            <FaIdCardAlt className="sidebar-icon" />
+            Auditoria
+          </div>
+          {openMenu === "auditoria" && (
+            <div className="sub-menu">
+              <NavLink
+                to="/auditoria/auditoria"
+                onClick={toggleSidebar}
+                className="sub-link"
+              >
+                Auditoria
               </NavLink>
             </div>
           )}

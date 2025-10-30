@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import "../../App.css";
+import { FaArrowLeft, FaSave } from "react-icons/fa";
 
 const CrearPasajeroProgramado = () => {
   const [nombres, setNombres] = useState("");
@@ -139,10 +140,10 @@ const CrearPasajeroProgramado = () => {
             className="btn-back"
             onClick={() => navigate("general/dashboard")}
           >
-            Regresar
+            <FaArrowLeft /> Regresar
           </button>
           <button type="submit" className="btn-save">
-            Guardar pasajero
+            <FaSave /> Guardar
           </button>
         </div>
       </form>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaSave } from "react-icons/fa";
 
 const ActivarPasillo = () => {
   const [ipPasillo, setIpPasillo] = useState("");
@@ -16,69 +17,70 @@ const ActivarPasillo = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!ipPasillo.trim()) {
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "El campo IP del pasillo es obligatorio.",
-    });
-    return;
-  }
-
-  if (!validarIP(ipPasillo)) {
-    Swal.fire({
-      icon: "error",
-      title: "IP inválida",
-      text: "Por favor ingresa una dirección IP válida (formato IPv4).",
-    });
-    return;
-  }
-
-  try {
-    // Verificar si la IP ya existe
-    const { data } = await axios.get("https://checkpass.parqueoo.com/api/Pasillo");
-
-    const ipExiste = data.some((pasillo) => pasillo.ipPasillo === ipPasillo);
-
-    if (ipExiste) {
+    if (!ipPasillo.trim()) {
       Swal.fire({
-        icon: "warning",
-        title: "IP ya registrada",
-        text: "La IP ingresada ya está registrada. No se puede duplicar.",
+        icon: "error",
+        title: "Error",
+        text: "El campo IP del pasillo es obligatorio.",
       });
       return;
     }
 
-    //Si no existe, enviar el POST
-    const response = await axios.post(
-      "https://checkpass.parqueoo.com/api/Pasillo",
-      {
-        ipPasillo,
-        activo,
-      }
-    );
-
-    if (response.status === 201) {
+    if (!validarIP(ipPasillo)) {
       Swal.fire({
-        icon: "success",
-        title: "¡Éxito!",
-        text: "Pasillo registrado correctamente.",
+        icon: "error",
+        title: "IP inválida",
+        text: "Por favor ingresa una dirección IP válida (formato IPv4).",
       });
-      setIpPasillo("");
-      setActivo(false);
+      return;
     }
-  } catch (error) {
-    console.error("Error al registrar el pasillo:", error);
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "No se pudo procesar la solicitud. Intenta de nuevo.",
-    });
-  }
-};
 
+    try {
+      // Verificar si la IP ya existe
+      const { data } = await axios.get(
+        "https://checkpass.parqueoo.com/api/Pasillo"
+      );
+
+      const ipExiste = data.some((pasillo) => pasillo.ipPasillo === ipPasillo);
+
+      if (ipExiste) {
+        Swal.fire({
+          icon: "warning",
+          title: "IP ya registrada",
+          text: "La IP ingresada ya está registrada. No se puede duplicar.",
+        });
+        return;
+      }
+
+      //Si no existe, enviar el POST
+      const response = await axios.post(
+        "https://checkpass.parqueoo.com/api/Pasillo",
+        {
+          ipPasillo,
+          activo,
+        }
+      );
+
+      if (response.status === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "¡Éxito!",
+          text: "Pasillo registrado correctamente.",
+        });
+        setIpPasillo("");
+        setActivo(false);
+      }
+    } catch (error) {
+      console.error("Error al registrar el pasillo:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo procesar la solicitud. Intenta de nuevo.",
+      });
+    }
+  };
 
   return (
     <div className="form-container">
@@ -109,10 +111,10 @@ const ActivarPasillo = () => {
             className="btn-back"
             onClick={() => navigate("general/dashboard")}
           >
-            Regresar
+            <FaArrowLeft /> Regresar
           </button>
           <button type="submit" className="btn-save">
-            Guardar pasillo
+            <FaSave /> Guardar
           </button>
         </div>
       </form>

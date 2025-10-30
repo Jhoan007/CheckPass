@@ -41,6 +41,8 @@ import ConfiguracionGestorModulos from './screens/Configuracion/GestorModulos';
 import ConfiguracionEditarUsuario from './screens/Configuracion/EditarUsuario';
 import ConfiguracionUsuariosRegistrados from './screens/Configuracion/UsuariosRegistrados';
 
+//AUDITORIA
+import AuditoriaAuditoria from './screens/Auditoria/Auditoria';
 
 
 
@@ -121,7 +123,7 @@ function AppWrapper() {
                     <Route path="/vuelos/crearvuelo" element={<Layout><CrearVuelo/></Layout>} />
                     <Route path="/vuelos/asignarpasajero" element={<Layout><AsignarPasajero /></Layout>} />
                     <Route path="/vuelos/asignarpasillo" element={<Layout><AsignarPasillo /></Layout>} />
-                    <Route path='/vuelos/listarvuelos' element={<Layout><ListaVuelos/></Layout>} />
+                    <Route path="/vuelos/listarvuelos" element={<Layout><ListaVuelos/></Layout>} />
   
                     {/* PASAJEROS */}
                     <Route path="/pasajeros/crearpasajero" element={<Layout><CrearPasajero /></Layout>} />
@@ -144,7 +146,10 @@ function AppWrapper() {
                     <Route path="/configuracion/editarusuario/:id" element={<Layout><ConfiguracionEditarUsuario /></Layout>} />
                     <Route path="/configuracion/usuariosregistrados" element={<Layout><ConfiguracionUsuariosRegistrados /></Layout>} />
 
-                    {/* Catch-all route si logueado */}
+                    {/* AUDITORIA*/}
+                    <Route path='/auditoria/auditoria' element={<Layout><AuditoriaAuditoria/></Layout>} />
+
+                    {/* Ruta sí esta logueado */}
                     <Route path="*" element={<Navigate to="/general/dashboard" />} />
 
                     

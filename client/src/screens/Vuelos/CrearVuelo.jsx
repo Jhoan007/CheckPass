@@ -3,7 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
-import { FaPlaneDeparture } from "react-icons/fa";
+import { FaPlaneDeparture, FaSave } from "react-icons/fa";
 
 const CrearVuelo = () => {
   const navigate = useNavigate();
@@ -238,7 +238,7 @@ const CrearVuelo = () => {
 
         <div className="botones-final">
           <button className="btn-guardar" type="button" onClick={guardarVuelo}>
-            Guardar
+            <FaSave /> Guardar
           </button>
           <button
             className="btn-siguiente"

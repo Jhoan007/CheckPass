@@ -218,7 +218,7 @@ const EditarVuelo = () => {
           <button
             className="btn-atras"
             type="button"
-            onClick={() => navigate("/vuelos")}
+            onClick={() => navigate(-1)}
           >
             Atras
           </button>

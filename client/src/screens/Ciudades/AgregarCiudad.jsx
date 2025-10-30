@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaCity } from "react-icons/fa";
+import { FaArrowLeft, FaCity, FaSave } from "react-icons/fa";
 import Swal from "sweetalert2";
 import axios from "axios";
 
@@ -10,7 +10,6 @@ const AgregarCiudad = () => {
 
   const [nombreCiudad, setNombreCiudad] = useState("");
   const [codigoIata, setCodigoIata] = useState("");
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,7 +55,9 @@ const AgregarCiudad = () => {
   };
   return (
     <div className="form-container">
-      <h2><FaCity /> Agregar nueva ciudad</h2>
+      <h2>
+        <FaCity /> Agregar nueva ciudad
+      </h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Nombre Ciudad:</label>
@@ -82,10 +83,10 @@ const AgregarCiudad = () => {
             className="btn-back"
             onClick={() => navigate("general/dashboard")}
           >
-            Regresar
+            <FaArrowLeft /> Regresar
           </button>
           <button type="submit" className="btn-save">
-            Agregar Ciudad
+            <FaSave /> Guardar
           </button>
         </div>
       </form>

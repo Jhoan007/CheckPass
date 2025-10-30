@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
-import { FaSave, FaUserFriends } from "react-icons/fa";
+import { FaSave, FaUserFriends, FaArrowLeft } from "react-icons/fa";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -204,9 +204,9 @@ const CrearUsuario = () => {
             <button
               type="button"
               className="btn-back"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("general/dashboard")}
             >
-              ← Regresar
+              <FaArrowLeft /> Regresar
             </button>
             <button type="submit" className="btn-save">
               <FaSave className="crearUser-icon" /> Guardar

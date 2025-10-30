@@ -273,8 +273,8 @@ function AsignarPasillo() {
         </>
       )}
 
-      <button className="btn-atras" type="button" onClick={() => navigate(-1)}>
-        atras
+      <button className="btn-atras" type="button" onClick={() => navigate("general/dashboard")}>
+        Salir
       </button>
     </div>
   );

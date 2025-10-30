@@ -41,11 +41,11 @@ const Vuelo = () => {
   // FUNCIÓN PARA CANCELAR
   const cancelarVuelo = async () => {
     const confirmar = await Swal.fire({
-      title: "¿Cancelar vuelo?",
+      title: "¿Cancelar Vuelo",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonColor: "#3085d6",
     });
 
     if (!confirmar.isConfirmed) return;
@@ -208,7 +208,7 @@ const Vuelo = () => {
           </div>
         </div>
         <div className="vuelo-item">
-          <div className="vuelo-label">Anticipación (minutos)</div>
+          <div className="vuelo-label">Anticipación (horas)</div>
           <input
             className="antip-input"
             type="number"

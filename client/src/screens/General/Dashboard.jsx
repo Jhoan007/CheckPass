@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../../App.css";
+import { FcCancel } from "react-icons/fc";
 
 import {
   FaPlaneDeparture,
-  FaPlaneArrival,
   FaExclamationTriangle,
-  FaBell,
+  FaGlobe,
 } from "react-icons/fa";
 
 import {
@@ -146,7 +146,7 @@ const Dashboard = () => {
 
         <div className="card">
           <div className="card-header">
-            <FaBell className="icon yellow" />
+            <FaGlobe className="icon yellow" />
             <span>Tipo de Vuelos</span>
           </div>
           <h2>
@@ -166,7 +166,7 @@ const Dashboard = () => {
 
         <div className="card">
           <div className="card-header">
-            <FaPlaneArrival className="icon red" />
+            <FcCancel className="icon red" />
             <span>Pasillos Inactivos</span>
           </div>
           <h2>{pasillosInactivos}</h2>
